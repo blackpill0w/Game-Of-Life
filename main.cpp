@@ -13,11 +13,6 @@
 #include "constants.h"
 #include "cell.h"
 
-void adjustMousePos(sf::Vector2i *mousePos) {
-   mousePos->x = (mousePos->x / constants::cellSize) * constants::cellSize;
-   mousePos->y = (mousePos->y / constants::cellSize) * constants::cellSize;
-}
-
 int main() {
    // Those are used for game logic not intialization
    sf::RenderWindow window(
@@ -53,7 +48,6 @@ int main() {
          else if (!animationStarted && evnt.type == sf::Event::MouseButtonPressed) {
             mouseClicked = true;
             mousePos = sf::Mouse::getPosition(window);
-            adjustMousePos(&mousePos);
          }
          else if (evnt.type == sf::Event::KeyPressed) {
             if (evnt.key.code == sf::Keyboard::G) {
@@ -66,15 +60,21 @@ int main() {
       // Draw
       for (Cell &cell : cells) {
          cell.draw(&window);
-         if (!animationStarted && mouseClicked) {
+         if (mouseClicked && !animationStarted) {
             cell.checkClicked(mousePos);
          }
          else if (animationStarted) {
             cell.checkState(&cells);
          }
       }
-      if (mouseClicked)
+      if (mouseClicked) {
          mouseClicked = false;
+         for (Cell &c : cells) {
+            if (c.alive) {
+               std::cout << c.index << '\n';
+            }
+         }
+      }
       if (animationStarted) {
          for (auto& cell : cells) {
             cell.update();

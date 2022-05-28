@@ -13,6 +13,7 @@ class Cell {
       int cellsNearMe[8];
       int x;
       int y;
+      int index;
    private:
       sf::Color BLACK{ sf::Color(0, 0, 0, 255) };
       sf::Color WHITE{ sf::Color(255, 255, 255, 255) };
@@ -28,6 +29,7 @@ class Cell {
       void resize(float newSquareSide);
    private:
       bool isClicked(sf::Vector2i &mousePos);
+      void adjustMousePos(sf::Vector2i &mousePos);
 };
 
 #endif

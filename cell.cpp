@@ -2,7 +2,7 @@
 
 Cell::Cell(float initialX, float initialY, int myX, int myY):
    alive{ false }, aliveNext{ false }, square{ sf::RectangleShape(sf::Vector2f(constants::cellSize, constants::cellSize)) },
-   cellsNearMe{ -1, -1, -1, -1, -1, -1, -1, -1 }, x{ myX }, y{ myY }
+   cellsNearMe{ -1, -1, -1, -1, -1, -1, -1, -1 }, x{ myX }, y{ myY }, index{ myX + myY*constants::squaresInX }
 {  
    this->square.setPosition(sf::Vector2f(initialX, initialY));
    this->square.setFillColor(deadColor);
@@ -13,11 +13,17 @@ Cell::Cell(float initialX, float initialY, int myX, int myY):
 
 }
 
+void Cell::adjustMousePos(sf::Vector2i &mousePos) {
+   mousePos.x = (mousePos.x / constants::cellSize) * constants::cellSize;
+   mousePos.y = (mousePos.y / constants::cellSize) * constants::cellSize;
+}
+
 bool Cell::isClicked(sf::Vector2i &mousePos) {
    return (std::abs(mousePos.x - this->square.getPosition().x) < 1 && std::abs(mousePos.y - this->square.getPosition().y) < 1);
 }
 
 void Cell::checkClicked(sf::Vector2i &mousePos) {
+   adjustMousePos(mousePos);
    if (isClicked(mousePos)) {
       this->alive = !(this->alive);
    }
@@ -28,37 +34,37 @@ void Cell::checkClicked(sf::Vector2i &mousePos) {
 }
 
 void Cell::setCellsNearMe() {
-   int myIndex{ this->x + this->y*constants::squaresInX };
-
    if (this->x > 0) {
       // Cell left
-      cellsNearMe[0] = myIndex - 1;
+      cellsNearMe[0] = this->index - 1;
       if (y > 0) {
          // Cell left up
-         cellsNearMe[1] = myIndex - 1 - constants::squaresInX;
+         cellsNearMe[1] = this->index - 1 - constants::squaresInX;
       }
       if (y + 1 < constants::squaresInY) {
          // Cell left down
-         cellsNearMe[2] = myIndex - 1 + constants::squaresInX;
+         cellsNearMe[2] = this->index - 1 + constants::squaresInX;
       }
    }
 
    if (this->x + 1 < constants::squaresInX) {
       // Cell right
-      cellsNearMe[3] = myIndex + 1;
+      cellsNearMe[3] = this->index + 1;
       if (y > 0) {
          // Cell right up
-         cellsNearMe[4] = myIndex + 1 - constants::squaresInX;
+         cellsNearMe[4] = this->index + 1 - constants::squaresInX;
       }
       if (y + 1 < constants::squaresInY) {
          // Cell right down
-         cellsNearMe[5] = myIndex + 1 + constants::squaresInX;
+         cellsNearMe[5] = this->index + 1 + constants::squaresInX;
          }
    }
    if (y > 0)
-      cellsNearMe[6] = myIndex - constants::squaresInX;
+      // Cell up
+      cellsNearMe[6] = this->index - constants::squaresInX;
    if (y + 1 < constants::squaresInY)
-      cellsNearMe[7] = myIndex + constants::squaresInX;
+      // Cell down
+      cellsNearMe[7] = this->index + constants::squaresInX;
 
 }
 
