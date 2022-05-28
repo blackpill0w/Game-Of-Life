@@ -69,11 +69,6 @@ int main() {
       }
       if (mouseClicked) {
          mouseClicked = false;
-         for (Cell &c : cells) {
-            if (c.alive) {
-               std::cout << c.index << '\n';
-            }
-         }
       }
       if (animationStarted) {
          for (auto& cell : cells) {

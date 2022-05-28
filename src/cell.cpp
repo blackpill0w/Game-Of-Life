@@ -27,8 +27,10 @@ void Cell::checkClicked(sf::Vector2i &mousePos) {
    if (isClicked(mousePos)) {
       this->alive = !(this->alive);
    }
-   if (this->alive)
+   if (this->alive) {
       this->square.setFillColor(aliveColor);
+      this->aliveNext = false;
+   }
    else
       this->square.setFillColor(deadColor);
 }
@@ -76,15 +78,19 @@ void Cell::checkState(std::vector<Cell> *cells) {
       }
    }
    if (this->alive) {
-      if (aliveNeighbours < 2 || aliveNeighbours > 3) {
-         std::cout << "Index: " << this->x + this->y*constants::squaresInX << '\n';
-         std::cout << "Alive neighbours: " << aliveNeighbours << '\n';
+      // A cell survives only if it's surrounded by 2 or 3 alive cells
+      if (aliveNeighbours != 2 && aliveNeighbours != 3) {
          this->aliveNext = false;
+      }
+      else {
+         this->aliveNext = true;
       }
    }
    else {
-      if (aliveNeighbours == 3)
+      // A dead cell comes to life if it's surrounded by 3 alive cells
+      if (aliveNeighbours == 3) {
          this->aliveNext = true;
+      }
    }
 }
 
