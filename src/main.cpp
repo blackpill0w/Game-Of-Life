@@ -1,20 +1,17 @@
-/************************************************/
-/*   TODO: split the thing on multiple files    */
-/************************************************/
-
-
-
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
 #include <cmath>
 #include <iostream>
 #include <vector>
 
+#include "SFML-utilities/sfmlColors.h"
+#include "SFML-utilities/button.h"
+
 #include "constants.h"
 #include "cell.h"
 
+
 int main() {
-   // Those are used for game logic not intialization
    sf::RenderWindow window(
          sf::VideoMode(
             static_cast<unsigned>(constants::wWidth),
@@ -24,6 +21,11 @@ int main() {
          sf::Style::Titlebar | sf::Style::Close
    );
    window.setFramerateLimit(constants::fps);
+
+   sfmlUtils::Button pauseButton(
+      "Pause", "src/Cantarell-VF.otf",
+      sf::Vector2f(constants::wWidth - constants::sideBarWidth + 10.f, 30)
+   );
 
    bool animationStarted{ false };
    bool mouseClicked(false);
@@ -37,6 +39,7 @@ int main() {
       }
    }
    for (Cell c: cells) {
+      // Each cell stores the indices of cells surrounding it.
       c.setCellsNearMe();
    }
    while (window.isOpen()) {
@@ -47,7 +50,6 @@ int main() {
          }
          else if (!animationStarted && evnt.type == sf::Event::MouseButtonPressed) {
             mouseClicked = true;
-            mousePos = sf::Mouse::getPosition(window);
          }
          else if (evnt.type == sf::Event::KeyPressed) {
             if (evnt.key.code == sf::Keyboard::G) {
@@ -56,8 +58,10 @@ int main() {
          }
       }
       // Clear
-      window.clear(sf::Color(0, 185, 205, 255));
+      window.clear(sfmlUtils::lightGreyColor);
       // Draw
+      mousePos = sf::Mouse::getPosition(window);
+   
       for (Cell &cell : cells) {
          cell.draw(&window);
          if (mouseClicked && !animationStarted) {
@@ -75,6 +79,7 @@ int main() {
             cell.update();
          }
       }
+      pauseButton.run(&window, mousePos, mouseClicked);
       // Display
       window.display();
    }

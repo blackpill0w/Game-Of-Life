@@ -2,6 +2,7 @@
 #define CONSTANTS_H
 
 namespace constants {
+   extern const int sideBarWidth;
    extern const int wWidth;
    extern const int wHeight;
    extern const int cellSize;
