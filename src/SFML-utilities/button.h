@@ -13,10 +13,10 @@ namespace sfmlUtils {
    {
       private:
          sf::RectangleShape button;
+         std::function< void() > functionToRun;
       public:
          sf::Font font;
          sf::Text sfmlText;
-         std::function< void() > functionToRun;
          sf::Color bgColor;
          sf::Color fgColor;
          sf::Color hoverBgColor;

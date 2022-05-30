@@ -5,7 +5,7 @@ namespace sfmlUtils {
 const sf::Vector2f Button::defaultPosition{ sf::Vector2f(0.f, 0.f) };
 const sf::Color Button::defaultBgColor{ sfmlUtils::blackColor };
 const sf::Color Button::defaultFgColor{ sfmlUtils::whiteColor };
-const sf::Color Button::defaultHoverBgColor{ sfmlUtils::lightestGreyColor };
+const sf::Color Button::defaultHoverBgColor{ sfmlUtils::darkGreyColor };
 
 sfmlUtils::Button::Button
 (
@@ -18,8 +18,9 @@ sfmlUtils::Button::Button
    sf::Color hoverBgColor
 )
 : button{},
-   font{}, sfmlText{},
-   functionToRun{ functionToRun },
+   functionToRun{ functionToRun }, // private
+   font{},
+   sfmlText{},
    bgColor{ bgColor }, fgColor{ fgColor }, hoverBgColor{ hoverBgColor },
    hovered{ false }
 {
@@ -34,32 +35,31 @@ sfmlUtils::Button::Button
 
    float textWidth = sfmlText.getGlobalBounds().width;
    float textHeight = sfmlText.getGlobalBounds().height;
-   float marginX = 30.f;
-   float marginY = 20.f;
+   float marginX = 20.f;
+   float marginY = 16.f;
 
    button.setSize(sf::Vector2f(textWidth + marginX, textHeight + marginY));
    
    button.setPosition(position);
-   // NOTE: I am not sure why this works
-   sfmlText.setPosition(position.x + marginX / 2.f - 2.f, position.y);
+   sfmlText.setPosition(position.x + marginX / 2.f, position.y);
 }
 
 void Button::run(sf::RenderWindow *window, sf::Vector2i &mousePos, bool &mousePressed) {
    window->draw(this->button);
    window->draw(this->sfmlText);
    // Check if hover
-   if (!hovered && this->button.getGlobalBounds().contains(mousePos.x, mousePos.y)) {
+   if (!this->hovered && this->button.getGlobalBounds().contains(mousePos.x, mousePos.y)) {
       this->hovered = true;
       button.setFillColor(this->hoverBgColor);
    }
    // Check if no longer hovered
-   else if (hovered && !this->button.getGlobalBounds().contains(mousePos.x, mousePos.y)) {
+   else if (this->hovered && ! this->button.getGlobalBounds().contains(mousePos.x, mousePos.y)) {
       this->hovered = false;
-      button.setFillColor(this->bgColor);
-      // Check if pressed
-      if (mousePressed && functionToRun) {
-         functionToRun();
-      }
+      this->button.setFillColor(this->bgColor);
+   }
+   // Check if pressed
+   if (this->hovered && mousePressed && this->functionToRun != nullptr) {
+      this->functionToRun();
    }
 }
 

@@ -1,6 +1,6 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
-#include <cmath>
+
 #include <iostream>
 #include <vector>
 
@@ -22,13 +22,23 @@ int main() {
    );
    window.setFramerateLimit(constants::fps);
 
+   bool mouseClicked(false);
+   bool animationStarted{ false };
    sfmlUtils::Button pauseButton(
-      "Pause", "src/Cantarell-VF.otf",
-      sf::Vector2f(constants::wWidth - constants::sideBarWidth + 10.f, 30)
+      " Play ", "UbuntuMono-R.ttf",
+      sf::Vector2f(constants::wWidth - constants::sideBarWidth + 10.f, 30),
+      // A lambda to change the state of the animation
+      [&animationStarted, &pauseButton](){ 
+         animationStarted = !animationStarted;
+         if (!animationStarted) {
+            pauseButton.sfmlText.setString(" Play ");
+         }
+         else {
+            pauseButton.sfmlText.setString(" Pause");
+         }
+      }
    );
 
-   bool animationStarted{ false };
-   bool mouseClicked(false);
    sf::Vector2i mousePos( {0, 0} );
 
    std::vector<Cell> cells;
@@ -48,13 +58,8 @@ int main() {
          if (evnt.type == sf::Event::Closed) {
             window.close();
          }
-         else if (!animationStarted && evnt.type == sf::Event::MouseButtonPressed) {
+         else if (evnt.type == sf::Event::MouseButtonPressed) {
             mouseClicked = true;
-         }
-         else if (evnt.type == sf::Event::KeyPressed) {
-            if (evnt.key.code == sf::Keyboard::G) {
-               animationStarted = !animationStarted;
-            }
          }
       }
       // Clear
@@ -62,24 +67,29 @@ int main() {
       // Draw
       mousePos = sf::Mouse::getPosition(window);
    
-      for (Cell &cell : cells) {
-         cell.draw(&window);
-         if (mouseClicked && !animationStarted) {
-            cell.checkClicked(mousePos);
+      pauseButton.run(&window, mousePos, mouseClicked);
+      if (!animationStarted) {
+         for (Cell &cell : cells) {
+            cell.draw(&window);
+            if (mouseClicked){   
+               cell.checkClicked(mousePos);
+            }
          }
-         else if (animationStarted) {
+      }
+      else if (animationStarted) {
+         for (Cell &cell : cells) {
+            cell.draw(&window);
             cell.checkState(&cells);
+         }
+      }
+      if (animationStarted) {
+         for (Cell& cell : cells) {
+            cell.update();
          }
       }
       if (mouseClicked) {
          mouseClicked = false;
       }
-      if (animationStarted) {
-         for (auto& cell : cells) {
-            cell.update();
-         }
-      }
-      pauseButton.run(&window, mousePos, mouseClicked);
       // Display
       window.display();
    }

@@ -5,8 +5,8 @@ LDFLAGS = -l sfml-window -l sfml-system -l sfml-graphics
 SRC=src
 SFML-UTILS=SFML-utilities
 
-game_of_life: constants.o cell.o sfmlColors.o button.o
-	${CXX} ${CXXFLAGS} ${LDFLAGS} $? ${SRC}/main.cpp -o $@
+game_of_life: constants.o cell.o sfmlColors.o button.o ${SRC}/main.cpp
+	${CXX} ${CXXFLAGS} ${LDFLAGS} $^ -o $@
 constants.o: ${SRC}/constants.cpp
 	${CXX} ${CXXFLAGS} -c $?
 cell.o: ${SRC}/cell.cpp

@@ -13,17 +13,11 @@ Cell::Cell(float initialX, float initialY, int myX, int myY):
 
 }
 
-void Cell::adjustMousePos(sf::Vector2i &mousePos) {
-   mousePos.x = (mousePos.x / constants::cellSize) * constants::cellSize;
-   mousePos.y = (mousePos.y / constants::cellSize) * constants::cellSize;
-}
-
 bool Cell::isClicked(sf::Vector2i &mousePos) {
-   return (std::abs(mousePos.x - this->square.getPosition().x) < 1 && std::abs(mousePos.y - this->square.getPosition().y) < 1);
+   return (this->square.getGlobalBounds().contains(mousePos.x, mousePos.y));
 }
 
 void Cell::checkClicked(sf::Vector2i &mousePos) {
-   adjustMousePos(mousePos);
    if (isClicked(mousePos)) {
       this->alive = !(this->alive);
    }
@@ -48,7 +42,6 @@ void Cell::setCellsNearMe() {
          cellsNearMe[2] = this->index - 1 + constants::squaresInX;
       }
    }
-
    if (this->x + 1 < constants::squaresInX) {
       // Cell right
       cellsNearMe[3] = this->index + 1;

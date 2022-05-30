@@ -29,7 +29,6 @@ class Cell {
       void resize(float newSquareSide);
    private:
       bool isClicked(sf::Vector2i &mousePos);
-      void adjustMousePos(sf::Vector2i &mousePos);
 };
 
 #endif

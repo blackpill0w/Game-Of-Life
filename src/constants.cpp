@@ -7,6 +7,6 @@ namespace constants {
    extern const int cellSize{ 20 };
    extern const int squaresInX{ (wWidth - sideBarWidth) / cellSize };
    extern const int squaresInY{ wHeight / cellSize };
-   extern const unsigned fps{ 10u };
+   extern const unsigned fps{ 14u };
    extern const unsigned long cellsNumber{ squaresInX * squaresInY };
 }
